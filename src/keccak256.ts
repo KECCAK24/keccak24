@@ -4,9 +4,9 @@ import createKeccakHash from 'keccak'
 
 const Buffer = buffer.Buffer
 
-function keccak256 (value: Buffer | BN | string | number) {
+function keccak24 (value: Buffer | BN | string | number) {
   value = toBuffer(value)
-  return createKeccakHash('keccak256').update(value as Buffer).digest()
+  return createKeccakHash('keccak24').update(value as Buffer).digest()
 }
 
 function toBuffer (value: any) {
@@ -87,7 +87,7 @@ function intToHex (i: number) {
 }
 
 if (typeof window !== 'undefined') {
-  (window as any).keccak256 = keccak256
+  (window as any).keccak24 = keccak24
 }
 
-export = keccak256
+export = keccak24

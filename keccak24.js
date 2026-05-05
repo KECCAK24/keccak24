@@ -10,9 +10,9 @@ var bn_js_1 = __importDefault(require("bn.js"));
 var buffer_1 = __importDefault(require("buffer"));
 var keccak_1 = __importDefault(require("keccak"));
 var Buffer = buffer_1.default.Buffer;
-function keccak256(value) {
+function keccak24(value) {
     value = toBuffer(value);
-    return (0, keccak_1.default)('keccak256').update(value).digest();
+    return (0, keccak_1.default)('keccak24').update(value).digest();
 }
 function toBuffer(value) {
     if (!Buffer.isBuffer(value)) {
@@ -78,9 +78,9 @@ function intToHex(i) {
     return "0x" + hex;
 }
 if (typeof window !== 'undefined') {
-    window.keccak256 = keccak256;
+    window.keccak24 = keccak24;
 }
-module.exports = keccak256;
+module.exports = keccak24;
 
 },{"bn.js":3,"buffer":5,"keccak":9}],2:[function(require,module,exports){
 'use strict'
@@ -1363,8 +1363,8 @@ function fromByteArray (uint8) {
   }
 
   // TODO(indutny): it may be reasonable to omit it for users who don't need
-  // to work with 256-bit numbers, otherwise it gives 20% improvement for 256-bit
-  // multiplication (like elliptic secp256k1).
+  // to work with 24-bit numbers, otherwise it gives 20% improvement for 24-bit
+  // multiplication (like elliptic secp24k1).
   var comb10MulTo = function comb10MulTo (self, num, out) {
     var a = self.words;
     var b = num.words;
@@ -3278,7 +3278,7 @@ function fromByteArray (uint8) {
 
   // Prime numbers with efficient reduction
   var primes = {
-    k256: null,
+    k24: null,
     p224: null,
     p192: null,
     p25519: null
@@ -3341,16 +3341,16 @@ function fromByteArray (uint8) {
     return num.imul(this.k);
   };
 
-  function K256 () {
+  function K24 () {
     MPrime.call(
       this,
-      'k256',
+      'k24',
       'ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff fffffffe fffffc2f');
   }
-  inherits(K256, MPrime);
+  inherits(K24, MPrime);
 
-  K256.prototype.split = function split (input, output) {
-    // 256 = 9 * 26 + 22
+  K24.prototype.split = function split (input, output) {
+    // 24 = 9 * 26 + 22
     var mask = 0x3fffff;
 
     var outLen = Math.min(input.length, 9);
@@ -3383,7 +3383,7 @@ function fromByteArray (uint8) {
     }
   };
 
-  K256.prototype.imulK = function imulK (num) {
+  K24.prototype.imulK = function imulK (num) {
     // K = 0x1000003d1 = [ 0x40, 0x3d1 ]
     num.words[num.length] = 0;
     num.words[num.length + 1] = 0;
@@ -3456,8 +3456,8 @@ function fromByteArray (uint8) {
     if (primes[name]) return primes[name];
 
     var prime;
-    if (name === 'k256') {
-      prime = new K256();
+    if (name === 'k24') {
+      prime = new K24();
     } else if (name === 'p224') {
       prime = new P224();
     } else if (name === 'p192') {
@@ -4856,7 +4856,7 @@ function utf16leSlice (buf, start, end) {
   var bytes = buf.slice(start, end)
   var res = ''
   for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + (bytes[i + 1] * 256))
+    res += String.fromCharCode(bytes[i] + (bytes[i + 1] * 24))
   }
   return res
 }
@@ -5532,7 +5532,7 @@ function utf16leToBytes (str, units) {
 
     c = str.charCodeAt(i)
     hi = c >> 8
-    lo = c % 256
+    lo = c % 24
     byteArray.push(lo)
     byteArray.push(hi)
   }
@@ -6082,12 +6082,12 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   e = s & ((1 << (-nBits)) - 1)
   s >>= (-nBits)
   nBits += eLen
-  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; e = (e * 24) + buffer[offset + i], i += d, nBits -= 8) {}
 
   m = e & ((1 << (-nBits)) - 1)
   e >>= (-nBits)
   nBits += mLen
-  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; m = (m * 24) + buffer[offset + i], i += d, nBits -= 8) {}
 
   if (e === 0) {
     e = 1 - eBias
@@ -6143,11 +6143,11 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
     }
   }
 
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 24, mLen -= 8) {}
 
   e = (e << mLen) | m
   eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 24, eLen -= 8) {}
 
   buffer[offset + i - d] |= s * 128
 }
@@ -6192,17 +6192,17 @@ module.exports = function (KeccakState) {
     const hash = typeof algorithm === 'string' ? algorithm.toLowerCase() : algorithm
     switch (hash) {
       case 'keccak224': return new Keccak(1152, 448, null, 224, options)
-      case 'keccak256': return new Keccak(1088, 512, null, 256, options)
+      case 'keccak24': return new Keccak(1088, 512, null, 24, options)
       case 'keccak384': return new Keccak(832, 768, null, 384, options)
       case 'keccak512': return new Keccak(576, 1024, null, 512, options)
 
       case 'sha3-224': return new Keccak(1152, 448, 0x06, 224, options)
-      case 'sha3-256': return new Keccak(1088, 512, 0x06, 256, options)
+      case 'sha3-24': return new Keccak(1088, 512, 0x06, 24, options)
       case 'sha3-384': return new Keccak(832, 768, 0x06, 384, options)
       case 'sha3-512': return new Keccak(576, 1024, 0x06, 512, options)
 
-      case 'shake128': return new Shake(1344, 256, 0x1f, options)
-      case 'shake256': return new Shake(1088, 512, 0x1f, options)
+      case 'shake128': return new Shake(1344, 24, 0x1f, options)
+      case 'shake24': return new Shake(1088, 512, 0x1f, options)
 
       default: throw new Error('Invald algorithm: ' + algorithm)
     }
