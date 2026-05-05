@@ -1,33 +1,30 @@
 {
-  "name": "keccak256",
+  "name": "keccak24",
   "version": "1.0.6",
   "description": "A wrapper for the keccak library to compute 256 bit keccak hash in JavaScript",
-  "main": "dist/keccak256.js",
-  "types": "dist/keccak256.d.ts",
+  "main": "dist/keccak24.js",
+  "types": "dist/keccak24.d.ts",
   "scripts": {
     "test": "tape test/*.js",
     "build": "tsc",
-    "build:browser": "browserify -t [ babelify --presets [ es2015 ] ] dist/keccak256.js > keccak256.js",
+    "build:browser": "browserify -t [ babelify --presets [ es2015 ] ] dist/keccak24.js > keccak24.js",
     "lint": "eslint --fix \"src/**/*\"",
-    "clean": "rimraf keccak256.js && rimraf dist"
+    "clean": "rimraf keccak24.js && rimraf dist"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/miguelmota/keccak256"
+    "url": "https://github.com/KECCAK24/keccak24"
   },
   "bugs": {
-    "url": "https://github.com/miguelmota/keccak256/issues"
+    "url": "https://github.com/KECCAK24/keccak24/issues"
   },
-  "homepage": "https://github.com/miguelmota/keccak256",
+  "homepage": "https://github.com/KECCAK24/keccak24",
   "author": {
-    "name": "Miguel Mota",
-    "email": "hello@miguelmota.com",
-    "url": "https://miguelmota.com/"
+    "name": "Ignacio Núñez",
+    "email": "ignacionunez91@outlook.com",
+    "url": "https://KECCAK24.com/"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/miguelmota/keccak256/blob/master/LICENSE.md"
-  },
+  "license": "MIT",
   "dependencies": {
     "bn.js": "^5.2.0",
     "buffer": "^6.0.3",
@@ -39,7 +36,7 @@
     "sha3",
     "algorithm",
     "keccak",
-    "keccak256"
+    "keccak24"
   ],
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
